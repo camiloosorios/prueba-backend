@@ -45,7 +45,7 @@ services:
       dockerfile: order-service/Dockerfile
     environment:
       SERVER_PORT: 8081
-      GATEWAY_URL: http://localhost:8080
+      GATEWAY_URL: http://gateway:8080
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USERNAME: postgres
@@ -65,7 +65,7 @@ services:
       dockerfile: product-service/Dockerfile
     environment:
       SERVER_PORT: 8082
-      GATEWAY_URL: http://localhost:8080
+      GATEWAY_URL: http://gateway:8080
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USERNAME: postgres
