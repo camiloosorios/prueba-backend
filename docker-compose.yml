@@ -1,0 +1,120 @@
+version: '3.8'
+
+services:
+  gateway-service:
+    container_name: gateway-service
+    build:
+      dockerfile: gateway/Dockerfile
+    environment:
+      AUTH_SERVICE_URI: http://user-service:3000
+      ORDER_MANAGEMENT_SERVICE_URI: http://order-service:8081
+      PRODUCT_SERVICE_URI: http://product-service:8082
+      CORS_ORIGIN: http://localhost:4200
+      JWT_SECRET_KEY: Bj99pU9RAOdV43FHvsX5Sx8TdenSSDiO8/2+rZbOb4k=
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+    depends_on:
+      - postgres
+      - redis
+
+  user-service:
+    container_name: user-service
+    build:
+      dockerfile: user-service/Dockerfile
+    environment:
+      SERVER_PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: orderdb
+      CORS_ORIGIN: http://localhost:4200
+      JWT_SECRET_KEY: Bj99pU9RAOdV43FHvsX5Sx8TdenSSDiO8/2+rZbOb4k=
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
+    depends_on:
+      - gateway-service
+
+  order-service:
+    container_name: order-service
+    build:
+      dockerfile: order-service/Dockerfile
+    environment:
+      SERVER_PORT: 8081
+      GATEWAY_URL: http://localhost:8080
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: orderdb
+      CORS_ORIGIN: http://localhost:4200
+    ports:
+      - "8081:8081"
+    networks:
+      - backend
+    depends_on:
+      - gateway-service
+
+  product-service:
+    container_name: product-service
+    build:
+      dockerfile: product-service/Dockerfile
+    environment:
+      SERVER_PORT: 8082
+      GATEWAY_URL: http://localhost:8080
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: orderdb
+      CORS_ORIGIN: http://localhost:4200
+      REDIS_HOST: redis
+      REDIS_PORT: 6397
+    ports:
+      - "8082:8082"
+    networks:
+      - backend
+    depends_on:
+      - gateway-service
+      - redis
+
+  postgres:
+    container_name: postgres-database
+    image: postgres:15-alpine3.20
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: orderdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - backend
+    restart: always
+
+  redis:
+    container_name: redis-cache
+    image: redis:7.2.7-alpine3.21
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+    command: redis-server --save 20 1 --loglevel warning
+    networks:
+      - backend
+    restart: always
+
+
+volumes:
+  postgres:
+    external: false
+  redis:
+    external: false
+
+networks:
+  backend:
+    driver: bridge

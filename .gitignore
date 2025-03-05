@@ -1,0 +1,44 @@
+# ===========================
+# 🌍 Archivos de sistema
+# ===========================
+.DS_Store
+Thumbs.db
+
+# ===========================
+# 📝 Logs y depuración
+# ===========================
+*.log
+logs/
+debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===========================
+# 🚀 Configuración de IDEs y editores
+# ===========================
+.idea/                 # Configuración de IntelliJ IDEA
+*.iml                 # Archivos de módulos de IntelliJ IDEA
+*.ipr                 # Archivos de proyecto de IntelliJ IDEA
+*.iws                 # Archivos de espacio de trabajo de IntelliJ IDEA
+.vscode/              # Configuración de Visual Studio Code
+*.swp                 # Archivos temporales de Vim
+*.swo
+
+# ===========================
+# ☕ Java, Maven y Gradle
+# ===========================
+target/               # Directorio de compilación de Maven
+*.class               # Archivos compilados de Java
+*.jar                 # JARs generados (si los quieres en Git, quítalo)
+*.war                 # WARs generados
+*.ear                 # EARs generados
+.mvn/                 # Configuración de Maven Wrapper
+**/mvnw               # Script de Maven Wrapper en cada servicio
+**/mvnw.cmd           # Script de Maven Wrapper en Windows
+**/pom.xml.tag        # Archivos temporales de Maven
+**/pom.xml.releaseBackup
+**/pom.xml.versionsBackup
+**/pom.xml.next
+**/release.properties
+dependency-reduced-pom.xml
