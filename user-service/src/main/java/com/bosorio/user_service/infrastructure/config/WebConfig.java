@@ -22,9 +22,6 @@ public class WebConfig {
     @Value("${cors.origin}")
     private String corsOrigin;
 
-    @Value("${gateway.url}")
-    private String gatewayUrl;
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -44,7 +41,7 @@ public class WebConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(corsOrigin, gatewayUrl));
+        configuration.setAllowedOrigins(List.of(corsOrigin));
         configuration.addAllowedHeader("*");
         configuration.setAllowedMethods(List.of("GET", "POST"));
         configuration.setAllowCredentials(true);

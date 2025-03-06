@@ -11,13 +11,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${cors.origin}")
     private String corsOrigin;
 
-    @Value("${gateway.cors}")
-    private String gatewayUrl;
-
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(corsOrigin, gatewayUrl)
+                .allowedOrigins(corsOrigin)
                 .allowCredentials(true)
                 .allowedHeaders("*")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE");

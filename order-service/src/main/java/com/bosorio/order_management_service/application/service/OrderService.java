@@ -44,9 +44,7 @@ public class OrderService implements OrderUseCases {
     @Override
     @Transactional
     public OrderDto createOrder(CreateOrderDto orderDto) {
-        System.out.println("entro");
         UserDto userDto = userService.getUserById(orderDto.getUserId());
-        System.out.println("salio");
 
         Order order = new Order();
         order.setUserId(userDto.getId());
