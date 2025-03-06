@@ -1,9 +1,9 @@
-package com.bosorio.order_management_service.application.service;
+package com.bosorio.order_management_service.infrastructure.adapter.out.service;
 
 import com.bosorio.order_management_service.application.dto.product.ProductDto;
 import com.bosorio.order_management_service.application.dto.reservation.ReservationDto;
 import com.bosorio.order_management_service.domain.enums.ReservationState;
-import com.bosorio.order_management_service.infrastructure.adapter.in.client.ProductClient;
+import com.bosorio.order_management_service.infrastructure.adapter.out.client.ProductClient;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

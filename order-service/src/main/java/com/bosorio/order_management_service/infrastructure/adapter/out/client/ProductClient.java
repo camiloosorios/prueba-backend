@@ -1,4 +1,4 @@
-package com.bosorio.order_management_service.infrastructure.adapter.in.client;
+package com.bosorio.order_management_service.infrastructure.adapter.out.client;
 
 import com.bosorio.order_management_service.application.dto.product.ProductDto;
 import com.bosorio.order_management_service.application.dto.reservation.ReservationDto;

@@ -54,6 +54,7 @@ public class ProductService implements ProductUseCases {
     }
 
     @Override
+    @Transactional
     public ProductDto getProductByIdForUpdate(Long id) {
         return productPersistencePort.findByIdForUpdate(id)
                 .map(ProductMapper::fromProductToProductDto)

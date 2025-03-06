@@ -9,6 +9,7 @@ import com.bosorio.order_management_service.application.useCases.OrderItemUseCas
 import com.bosorio.order_management_service.domain.exception.BadRequestException;
 import com.bosorio.order_management_service.domain.model.OrderItem;
 import com.bosorio.order_management_service.domain.port.OrderItemPersistencePort;
+import com.bosorio.order_management_service.infrastructure.adapter.out.service.ProductService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

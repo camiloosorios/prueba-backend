@@ -1,5 +1,6 @@
 package com.bosorio.order_management_service.application.service;
 
+import com.bosorio.order_management_service.application.dto.events.ReservationEvent;
 import com.bosorio.order_management_service.application.dto.order.CreateOrderDto;
 import com.bosorio.order_management_service.application.dto.order.OrderDto;
 import com.bosorio.order_management_service.application.dto.order.UpdateOrderDto;
@@ -7,14 +8,17 @@ import com.bosorio.order_management_service.application.dto.orderItem.OrderItemD
 import com.bosorio.order_management_service.application.dto.product.ProductDto;
 import com.bosorio.order_management_service.application.dto.reservation.ReservationDto;
 import com.bosorio.order_management_service.application.dto.user.UserDto;
+import com.bosorio.order_management_service.application.enums.ReservationEventType;
 import com.bosorio.order_management_service.application.exception.NotFoundException;
 import com.bosorio.order_management_service.application.mapper.OrderMapper;
 import com.bosorio.order_management_service.application.useCases.OrderUseCases;
 import com.bosorio.order_management_service.domain.enums.OrderState;
 import com.bosorio.order_management_service.domain.enums.ReservationState;
 import com.bosorio.order_management_service.domain.model.Order;
-import com.bosorio.order_management_service.domain.model.OrderItem;
 import com.bosorio.order_management_service.domain.port.OrderPersistencePort;
+import com.bosorio.order_management_service.infrastructure.adapter.out.service.OrderEventProducer;
+import com.bosorio.order_management_service.infrastructure.adapter.out.service.ProductService;
+import com.bosorio.order_management_service.infrastructure.adapter.out.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,6 +38,8 @@ public class OrderService implements OrderUseCases {
     private final OrderItemService orderItemService;
 
     private final ProductService productService;
+
+    private final OrderEventProducer orderEventProducer;
 
     @Override
     @Transactional
@@ -90,17 +96,27 @@ public class OrderService implements OrderUseCases {
                 ReservationDto reservationExist = productService.getReservation(order.getId(), productDto.getId());
 
                 if (reservationExist == null || reservationExist.getStatus() == ReservationState.CANCELLED) {
-                    ReservationDto reservationDto = new ReservationDto();
-                    reservationDto.setProductId(productDto.getId());
-                    reservationDto.setQuantity(orderItemDto.getQuantity());
-                    reservationDto.setOrderId(order.getId());
-                    productService.createReservation(reservationDto);
+                    ReservationEvent reservationEvent = new ReservationEvent(
+                            null,
+                            order.getId(),
+                            productDto.getId(),
+                            orderItemDto.getQuantity(),
+                            ReservationEventType.CREATE
+                    );
+                    orderEventProducer.sendReservationEvent(reservationEvent);
                 }
             }
             if (order.getStatus() == OrderState.CANCELLED) {
                 ReservationDto reservationExist = productService.getReservation(order.getId(), productDto.getId());
                 if (reservationExist != null) {
-                    productService.updateReservation(reservationExist.getId(), ReservationState.CANCELLED);
+                    ReservationEvent reservationEvent = new ReservationEvent(
+                            reservationExist.getId(),
+                            order.getId(),
+                            productDto.getId(),
+                            orderItemDto.getQuantity(),
+                            ReservationEventType.CANCEL
+                    );
+                    orderEventProducer.sendReservationEvent(reservationEvent);
                 }
             }
         });
