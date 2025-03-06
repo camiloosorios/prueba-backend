@@ -20,6 +20,18 @@ spring:
         locator:
           enabled: true
 
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    urls:
+      - name: Auth Service
+        url: ${AUTH_SERVICE_BASE}/v3/api-docs
+      - name: Order Management Service
+        url: ${ORDER_MANAGEMENT_SERVICE_BASE}/v3/api-docs
+      - name: Product Service
+        url: ${PRODUCT_SERVICE_BASE}/v3/api-docs
+
 cors:
   origin: ${CORS_ORIGIN}
 

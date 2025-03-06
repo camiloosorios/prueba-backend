@@ -31,6 +31,8 @@ public class SecurityConfig {
         return http.csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeExchange(auth -> {
+                    auth.pathMatchers("/swagger-ui/**").permitAll();
+                    auth.pathMatchers("/v3/api-docs/**").permitAll();
                     auth.pathMatchers("/api/auth/**").permitAll();
                     auth.pathMatchers("/api/users/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN");
                     auth.anyExchange().hasAuthority("ROLE_ADMIN");
