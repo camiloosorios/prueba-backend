@@ -16,6 +16,7 @@ public class UserService {
 
     public UserDto getUserById(Long id) {
         String token = request.getHeader("Authorization");
+        System.out.println(token);
         return userClient.getUserById(id, token);
     }
 

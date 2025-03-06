@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
             }
         });
 
-        return ResponseEntity.status(ex.status()).body(errors);
+        return ResponseEntity.status(400).body(errors);
     }
 
 

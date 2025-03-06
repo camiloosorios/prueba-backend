@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .authorizeExchange(auth -> {
                     auth.pathMatchers("/swagger-ui/**").permitAll();
                     auth.pathMatchers("/v3/api-docs/**").permitAll();
+                    auth.pathMatchers("/openapi.yml").permitAll();
                     auth.pathMatchers("/api/auth/**").permitAll();
                     auth.pathMatchers("/api/users/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN");
                     auth.anyExchange().hasAuthority("ROLE_ADMIN");

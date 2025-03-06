@@ -1,0 +1,584 @@
+openapi: 3.1.0
+info:
+  title: Order Management Service API
+  version: 1.0.0
+  description: |
+    This API enables the management of orders and products in an e-commerce system. 
+    It provides endpoints for creating, updating, and retrieving orders, as well as handling users and products. 
+    Authentication is managed via JWT to ensure secure access to protected resources.
+
+    **Key Features:**
+    - User management and authentication.
+    - Order creation and retrieval.
+    - Communication between microservices via REST APIs and Kafka messaging.
+    - Security implemented with Spring Security and JWT.
+
+    To access protected endpoints, a valid authorization token must be included in the requests.
+paths:
+  /api/auth/register:
+    post:
+      tags:
+        - users
+      summary: Register a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserDto'
+        required: true
+      responses:
+        '200':
+          description: User registered successfully
+  /api/auth/login:
+    post:
+      tags:
+        - users
+      summary: Login a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserDto'
+        required: true
+      responses:
+        '200':
+          description: User logged in successfully
+  /api/users/{id}:
+    get:
+      tags:
+        - users
+      summary: Get user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+
+
+  /api/orders:
+    post:
+      tags:
+        - orders
+      summary: Create a new order
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderDto'
+        required: true
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Order created successfully
+  /api/orders/{id}:
+    get:
+      tags:
+        - orders
+      summary: Get order by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDto'
+    put:
+      tags:
+        - orders
+      summary: Update an order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderDto'
+        required: true
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Order updated successfully
+    delete:
+      tags:
+        - orders
+      summary: Delete an order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Order deleted successfully
+  /api/orders/user/{userId}:
+    get:
+      tags:
+        - orders
+      summary: Get orders by user ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderDto'
+
+
+  /api/products:
+    get:
+      tags:
+        - products
+      summary: Get all products
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductDto'
+    post:
+      tags:
+        - products
+      summary: Create a new product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductDto'
+        required: true
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Product created successfully
+  /api/products/{id}:
+    get:
+      tags:
+        - products
+      summary: Get product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Product details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDto'
+    delete:
+      tags:
+        - products
+      summary: Delete a product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Product deleted successfully
+    patch:
+      tags:
+        - products
+      summary: Update a product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductDto'
+        required: true
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Product updated successfully
+  /api/products/{id}/no-cache:
+    get:
+      tags:
+        - products
+      summary: Get product by ID (no cache)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Product details (no cache)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDto'
+
+
+  /api/reservations:
+    post:
+      tags:
+        - reservations
+      summary: Create a new reservation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationDto'
+        required: true
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Reservation created successfully
+  /api/reservations/{id}:
+    get:
+      tags:
+        - reservations
+      summary: Get reservation by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Reservation details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationDto'
+    put:
+      tags:
+        - reservations
+      summary: Update a reservation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+              enum:
+                - ACTIVE
+                - COMPLETED
+                - CANCELLED
+        required: true
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Reservation updated successfully
+    delete:
+      tags:
+        - reservations
+      summary: Delete a reservation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Reservation deleted successfully
+  /api/reservations/order/{orderId}:
+    get:
+      tags:
+        - reservations
+      summary: Get reservations by order ID
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of reservations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReservationDto'
+  /api/reservations/order/{orderId}/product/{productId}:
+    get:
+      tags:
+        - reservations
+      summary: Get reservations by order ID and product ID
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Reservation details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationDto'
+
+components:
+  schemas:
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+    RegisterUserDto:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        passwordConfirmation:
+          type: string
+      required:
+        - name
+        - email
+        - password
+        - passwordConfirmation
+    LoginUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+
+    CreateOrderDto:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+        orderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateOrderItemDto'
+      required:
+        - userId
+        - orderItems
+    CreateOrderItemDto:
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+      required:
+        - productId
+        - quantity
+    UpdateOrderDto:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+        orderState:
+          type: string
+          enum:
+            - PENDING
+            - CONFIRMED
+            - SHIPPED
+            - DELIVERED
+            - CANCELLED
+        version:
+          type: integer
+          format: int32
+      required:
+        - userId
+        - orderState
+        - version
+    OrderDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: integer
+          format: int64
+        status:
+          type: string
+          enum:
+            - PENDING
+            - CONFIRMED
+            - SHIPPED
+            - DELIVERED
+            - CANCELLED
+        version:
+          type: integer
+          format: int32
+
+
+    CreateProductDto:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          minimum: 1
+        stock:
+          type: integer
+          format: int32
+          minimum: 0
+      required:
+        - name
+        - description
+        - price
+        - stock
+    ProductDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        stock:
+          type: integer
+          format: int32
+
+
+    ReservationDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        productId:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - COMPLETED
+            - CANCELLED
+        orderId:
+          type: integer
+          format: int64
+      required:
+        - productId
+        - quantity
+        - orderId
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
